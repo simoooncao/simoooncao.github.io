@@ -2,7 +2,26 @@
 	<head>
 		<title>秀恩爱？分作友~</title>
 		<meta charset = "utf-8"/>
+		<base href = "file://E:/MyBlog/"/>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" > </script>
 	<body>
-		<p>如何和脸黑的涅法雷姆做朋友<p>
+		<div id = 'MyTitle' align = 'center'>
+			<div id = 'MyLogo' style = 'float:left'>
+				<img src = 'source/logo.png'>
+			</div>
+			<div id = 'TitleContent' style = 'float:left'>
+				<p>脸黑的世界充满伤悲</p>
+				<p>与奈黑天做朋友的正确姿势</p>
+			</div>
+			<div style = 'clear:both'> </div>
+		</div>
+		<script type = "text/javascript">
+			(function()
+			{
+				var myTitle = $("#MyTitle");
+				myTitle.css("position" , "absolute");
+				myTitle.css("left" , (document.body.clientWidth - myTitle.width()) / 2);
+			})();
+		</script>
 	<body/>
 <html/>
