@@ -1,27 +1,91 @@
-﻿<html>
+﻿<!DOCTYPE html>
+<html>
 	<head>
 		<title>秀恩爱？分作友~</title>
 		<meta charset = "utf-8"/>
-		<base href = "file://E:/MyBlog/"/>
+		<base href = "http://simoooncao.github.io/"/>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" > </script>
-	<body>
-		<div id = 'MyTitle' align = 'center'>
-			<div id = 'MyLogo' style = 'float:left'>
-				<img src = 'source/logo.png'>
-			</div>
-			<div id = 'TitleContent' style = 'float:left'>
-				<p>脸黑的世界充满伤悲</p>
-				<p>与奈黑天做朋友的正确姿势</p>
-			</div>
-			<div style = 'clear:both'> </div>
-		</div>
 		<script type = "text/javascript">
-			(function()
+			function addImg(rest)
 			{
-				var myTitle = $("#MyTitle");
-				myTitle.css("position" , "absolute");
-				myTitle.css("left" , (document.body.clientWidth - myTitle.width()) / 2);
-			})();
+				if(imgNumber == imgLimit) return;
+				if(rest + imgNumber > imgLimit)
+					rest = imgLimit - imgNumber;
+				while(rest > 0)
+				{
+					var i , j = 0;
+					for(i = 1 ; i < 4 ; i++)
+						if(divHeight[i] < divHeight[j])
+							j = i;
+					
+					var $div = $("#div" + j);
+					var realNumber = imgNumber > imgRealNumber ? parseInt(Math.random() * imgRealNumber) : imgNumber;
+					var imgSrc = realNumber + imgExt;
+					
+					var $img = $("<img src = '" + imgSrc + "' width = 310px />");
+					
+					$div.append($img);
+					divHeight[j] += $img.height();
+					
+					rest--;
+					imgNumber++;
+				}
+			}
+		</script>
+		<style type = "text/css">
+			#MyTitle div{position : relative ;  width : auto ;  display : inline-block}
+			#TitleContent{bottom : 13px}
+			#MyTitle{width : "100%"}
+			#MyBody{width : 1024px ; border 3px solid #0000FF ; margin : 0 auto ; overflow : auto}
+		</style>
+	</head>
+	<body>
+		<div id = 'MyTitle' , align = 'center'>
+			<div id = 'MyLogo'>
+				<img src = 'source/LOGO.png'>
+			</div>
+			<div id = 'TitleContent' >
+				<p>听说你们都是奈黑天</p>
+				<p>是时候和他们删除好友啦！</p>
+			</div>
+		</div>
+		
+		<div id = 'MyBody' class = 'mybody'>
+			<div id = 'ImgError' align = "center">
+				啊哦，图片加载失败了呦~
+			</div>
+			<div id = "Img0" class = 'Img' />
+			<div id = 'Img1' class = 'Img' />
+			<div id = 'Img2' class = 'Img' />
+			<div id = 'Img3' class = 'Img' />
+		</div>
+		
+		<div id = 'MyTail'>
+			<img src = "source/ending.jpg" width = "1024px" height = "560px"/>
+		</div>
+		
+		<script type = "text/javascript">
+			var imgLimit;
+			var imgNumber = 0;
+			var imgRealNumber;
+			var imgExt;
+			
+			var divHeight = [0 , 0 , 0 , 0];
+			
+			$.getJSON("source/meta.json" , function(json)
+			{
+				alert(1);
+				imgLimit = Number(json.imgLimit);
+				imgRealNumber = Number(json.imgRealNumber);
+				imgExt = Number(json.ext);
+				
+			});
+			
+			if(typeof imgLimit == 'number')
+			{
+				$("imgError").remove();
+				addImg(40);
+			}
 		</script>
 	<body/>
 <html/>
