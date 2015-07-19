@@ -6,6 +6,21 @@
 		<base href = "http://simoooncao.github.io/"/>
 		<script type="text/javascript" src="http://libs.baidu.com/jquery/1.7.2/jquery.min.js" > </script>
 		<script type = "text/javascript">
+			function getDist(x1 , y1 , x2 , y2)
+			{
+				x1 = x1 / 180 * Math.PI;
+				x2 = x2 / 180 * Math.PI;
+				y1 = y1 / 180 * Math.PI;
+				y2 = y2 / 180 * Math.PI;
+				var a = Math.cos(x1) * Math.cos(y1);
+				var b = Math.cos(x2) * Math.cos(y2);
+				var c = Math.cos(y1) * Math.sin(x1);
+				var d = Math.cos(y2) * Math.sin(x2);
+				var e = Math.sin(y1) * Math.sin(y2);
+				return (Math.acos(a * b + c * d + e)) * 6371;
+			}
+		</script>
+		<script type = "text/javascript">
 			function addImg(rest)
 			{
 				if(imgNumber == imgLimit) return;
@@ -31,12 +46,12 @@
 					imgOnClick = true;
 					
 					var $myFullComment = $("<div id = 'MyFullComment'></div>");
-					var $bigImgDiv = $("<div id = 'BigImg' style = 'float:left'></div>");
+					var $bigImgDiv = $("<div id = 'BigImg'></div>");
 					var $bigImg = $("<img src = '" + imgSrc + "' />");
 					var $myComment = $("<div id = 'MyComment'></div>");
 					var $content = $("<div id = 'MyCommentContent'></div>");
 					var $geography = $("<div></div>");
-					var $spanS = $("<div style = 'margin : 0 auto'></div>");
+					var $spanS = $("<div></div>");
 					var $a , $span , $p;
 
 					$bigImgDiv.append($bigImg);
@@ -57,16 +72,19 @@
 						event.stopPropagation();
 					});
 					
-					alert(1);
 					$myComment.append($content);
+					$myComment.css("position" , "absolute");
+					$myComment.css("top" , 20);
+					$myComment.css("left" , 420);
+					$myComment.css("background-color" , "#C3C3C3");
 					$content.text("评论正在加载中~");
 					$.getJSON("source/comment1.json" , function(data)
 					{
-						$content.text("1");
+						$content.text("评论列表");
 						$("#MyCommentContent p").remove();
 						for(var i = 0 ; typeof data[i] != 'undefined' ; i++)
 						{
-							$p = $('<p>' + data[i].user + ':' + data[i].content + '</p>');
+							$p = $('<p>' + data[i].name + ':' + data[i].content + '</p>');
 							$content.append($p);
 						}
 					});
@@ -85,8 +103,7 @@
 							
 							$.getJSON("source/comment" + nowComment + ".json" , function(data)
 							{
-								$content.text("");
-								alert(1);
+								$content.text("评论列表");
 								$("#MyCommentContent p").remove();
 								for(var i = 0 ; typeof data[i] != 'undefined' ; i++)
 								{
@@ -101,6 +118,23 @@
 					$spanS.css("display" , "inline-block");
 					$myComment.append($spanS);
 					
+					navigator.geolocation.getCurrentPosition(function()
+					{
+						gotGeography = true;
+						myLatitude = position.coords.latitude;
+						myLongitude = position.coords.longitude;
+						myDistance = getDist(myLatitude , myLongitude , random() * 180 - 90 , random() * 360 - 180);
+					},function()
+					{
+						 gotGeography = false;
+					});
+					
+					$geography.css("position" , "absolute");
+					$geography.css("top" , 620);
+					$geography.css("left" , 20);
+					if(gotGeography)
+						$geography.text("此图片距您的地理距离为" + myDistance + "千米");
+					else $geography.text("获取您的地理位置失败！");
 					$(document.body).append($myFullComment);
 					
 					event.stopPropagation();
@@ -170,6 +204,7 @@
 			var gotGeography = false;
 			var myLongitude;
 			var mylatitude;
+			var myDistance;
 			
 			var divStatus = [{number : 0 , height : 0} , {number : 1 , height : 0} , {number : 2 , height : 0} , {number : 3 , height : 0}];
 			
@@ -192,7 +227,7 @@
 				if($(window).scrollTop() + $(window).height() >= divStatus[0].height && imgNumber >=40)
 					if(onLoading == false)
 						if(imgOnClick == false)
-							;//addImg(20);
+							addImg(20);
 			});
 			
 			$(window).click(function()
