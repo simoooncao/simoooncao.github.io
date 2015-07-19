@@ -18,12 +18,94 @@
 					
 				var $div = $("#Img" + divStatus[0].number);
 				var realNumber = imgNumber > imgRealNumber ? parseInt(Math.random() * imgRealNumber) : imgNumber;
+				!realNumber && realNumber++;
 				var imgSrc = "source/" + realNumber + imgExt;
 					
 				var $img = $("<img src = '" + imgSrc + "' />");
 				$div.append($img);
 				$img.width(280);
-				
+				$img.click(function(event)
+				{
+					if(imgOnClick)
+						return;
+					imgOnClick = true;
+					
+					var $myFullComment = $("<div id = 'MyFullComment'></div>");
+					var $bigImgDiv = $("<div id = 'BigImg' style = 'float:left'></div>");
+					var $bigImg = $("<img src = '" + imgSrc + "' />");
+					var $myComment = $("<div id = 'MyComment'></div>");
+					var $content = $("<div id = 'MyCommentContent'></div>");
+					var $geography = $("<div></div>");
+					var $spanS = $("<div style = 'margin : 0 auto'></div>");
+					var $a , $span , $p;
+
+					$bigImgDiv.append($bigImg);
+					$bigImgDiv.append($geography);
+					$bigImg.width(400);
+					$bigImg.height(600);
+					
+					$myFullComment.append($bigImgDiv);
+					$myFullComment.append($myComment);
+					$myFullComment.width(850);
+					$myFullComment.height(650);
+					$myFullComment.css("position" , "absolute");
+					$myFullComment.css("top" , $(window).scrollTop() + 20);
+					$myFullComment.css("left" , $(window).scrollLeft() + 180);
+					$myFullComment.css("background-color" , "#C3C3C3");
+					$myFullComment.click(function(event)
+					{
+						event.stopPropagation();
+					});
+					
+					alert(1);
+					$myComment.append($content);
+					$content.text("评论正在加载中~");
+					$.getJSON("source/comment1.json" , function(data)
+					{
+						$content.text("1");
+						$("#MyCommentContent p").remove();
+						for(var i = 0 ; typeof data[i] != 'undefined' ; i++)
+						{
+							$p = $('<p>' + data[i].user + ':' + data[i].content + '</p>');
+							$content.append($p);
+						}
+					});
+					
+					for(var i = 0 ; i < commentNumber ; i++)
+					{
+						$span = $("<span id = 'page" + (i + 1) + "'> </span>");
+						$a = $("<a>" + (i + 1) + "</a>");
+						$a.click(function()
+						{
+							if(Number(this.text) == nowComment)
+								return;
+							
+							$content.text("评论正在加载中~");
+							nowComment = Number(this.text);
+							
+							$.getJSON("source/comment" + nowComment + ".json" , function(data)
+							{
+								$content.text("");
+								alert(1);
+								$("#MyCommentContent p").remove();
+								for(var i = 0 ; typeof data[i] != 'undefined' ; i++)
+								{
+									$p = $('<p>' + data[i].name + ':' + data[i].content + '</p>');
+									$content.append($p);
+								}
+							});
+						});
+						$span.append($a);
+						$spanS.append($span);
+					}
+					$spanS.css("display" , "inline-block");
+					$myComment.append($spanS);
+					
+					$(document.body).append($myFullComment);
+					
+					event.stopPropagation();
+					
+				});
 				$img.load(function()
 				{
 					divStatus[0].height += $img.height() + 20;
@@ -69,7 +151,7 @@
 		</div>
 		
 		<div id = 'MyTail' align = "center">
-			<img src = "source/ending.jpg" width = "1024px" height = "560px"/>
+			<img src = "source/Ending.jpg" width = "1024px" height = "560px"/>
 		</div>
 			
 		<script type = "text/javascript">
@@ -78,8 +160,16 @@
 			var imgRealNumber;
 			var imgExt;
 			
+			var commentNumber;
+			var commentName;
+			var nowComment = 1;
+			
 			var onLoading = false;
 			var imgOnClick = false;
+			
+			var gotGeography = false;
+			var myLongitude;
+			var mylatitude;
 			
 			var divStatus = [{number : 0 , height : 0} , {number : 1 , height : 0} , {number : 2 , height : 0} , {number : 3 , height : 0}];
 			
@@ -88,6 +178,9 @@
 				imgLimit = Number(json.imgLimit);
 				imgRealNumber = Number(json.imgRealNumber);
 				imgExt = json.ext;
+				
+				commentNumber = Number(json.commentNumber);
+				commentName = json.commentName;
 				
 				$("#ImgError").remove();
 				addImg(40);
@@ -98,7 +191,8 @@
 			{
 				if($(window).scrollTop() + $(window).height() >= divStatus[0].height && imgNumber >=40)
 					if(onLoading == false)
-						addImg(20);
+						if(imgOnClick == false)
+							;//addImg(20);
 			});
 			
 			$(window).click(function()
@@ -106,10 +200,10 @@
 				if(imgOnClick)
 				{
 					imgOnClick = false;
-					$("#MyComment").remove();
+					$("#MyFullComment").remove();
 				}
 			});
 			
 		</script>
-	<body/>
-<html/>
+	</body>
+</html>
