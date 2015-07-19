@@ -4,39 +4,47 @@
 		<title>秀恩爱？分作友~</title>
 		<meta charset = "utf-8"/>
 		<base href = "http://simoooncao.github.io/"/>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" > </script>
+		<script type="text/javascript" src="http://libs.baidu.com/jquery/1.7.2/jquery.min.js" > </script>
 		<script type = "text/javascript">
 			function addImg(rest)
 			{
 				if(imgNumber == imgLimit) return;
+				if(rest == 0) return;
 				if(rest + imgNumber > imgLimit)
 					rest = imgLimit - imgNumber;
-				while(rest > 0)
+					
+				imgNumber++;
+				onLoading = true;
+					
+				var $div = $("#Img" + divStatus[0].number);
+				var realNumber = imgNumber > imgRealNumber ? parseInt(Math.random() * imgRealNumber) : imgNumber;
+				var imgSrc = "source/" + realNumber + imgExt;
+					
+				var $img = $("<img src = '" + imgSrc + "' />");
+				$div.append($img);
+				$img.width(280);
+				
+				$img.load(function()
 				{
-					var i , j = 0;
-					for(i = 1 ; i < 4 ; i++)
-						if(divHeight[i] < divHeight[j])
-							j = i;
-					
-					var $div = $("#div" + j);
-					var realNumber = imgNumber > imgRealNumber ? parseInt(Math.random() * imgRealNumber) : imgNumber;
-					var imgSrc = realNumber + imgExt;
-					
-					var $img = $("<img src = '" + imgSrc + "' width = 310px />");
-					
-					$div.append($img);
-					divHeight[j] += $img.height();
-					
-					rest--;
-					imgNumber++;
-				}
+					divStatus[0].height += $img.height() + 20;
+					divStatus.sort(function(a,b){return a.height > b.height ? 1 : -1;});
+					addImg(rest - 1);
+				});
+				onLoading = false;
 			}
 		</script>
 		<style type = "text/css">
 			#MyTitle div{position : relative ;  width : auto ;  display : inline-block}
 			#TitleContent{bottom : 13px}
-			#MyTitle{width : "100%"}
-			#MyBody{width : 1024px ; border 3px solid #0000FF ; margin : 0 auto ; overflow : auto}
+			#MyTitle{width : "100%" , height : 300px}
+			
+			#MyBody{width : 1200px ; margin: 0 auto; border : 2px solid #00FF00 ; overflow : auto}
+			.Img{width:270px ; display : inline-block ; margin-left: 12px ; margin-right: 12px ; float : left}
+			.Img img{margin-top : 10px ; margin-bottom : 10px}
+			.Img img:hover{-webkit-transform:scale(1.2); -webkit-transition: all 0.1s ease-in;}
+			
+			#MyTail {width : "100%" ; height : auto}
+			#MyTail img{margin : 0 auto}
 		</style>
 	</head>
 	<body>
@@ -52,40 +60,56 @@
 		
 		<div id = 'MyBody' class = 'mybody'>
 			<div id = 'ImgError' align = "center">
-				啊哦，图片加载失败了呦~
+				啊哦，图片数据加载失败了呦~
 			</div>
-			<div id = "Img0" class = 'Img' />
-			<div id = 'Img1' class = 'Img' />
-			<div id = 'Img2' class = 'Img' />
-			<div id = 'Img3' class = 'Img' />
+			<div id = "Img0" class = 'Img' > </div>
+			<div id = 'Img1' class = 'Img' > </div>
+			<div id = 'Img2' class = 'Img' > </div>
+			<div id = 'Img3' class = 'Img' > </div>
 		</div>
 		
-		<div id = 'MyTail'>
+		<div id = 'MyTail' align = "center">
 			<img src = "source/ending.jpg" width = "1024px" height = "560px"/>
 		</div>
-		
+			
 		<script type = "text/javascript">
 			var imgLimit;
 			var imgNumber = 0;
 			var imgRealNumber;
 			var imgExt;
 			
-			var divHeight = [0 , 0 , 0 , 0];
+			var onLoading = false;
+			var imgOnClick = false;
+			
+			var divStatus = [{number : 0 , height : 0} , {number : 1 , height : 0} , {number : 2 , height : 0} , {number : 3 , height : 0}];
 			
 			$.getJSON("source/meta.json" , function(json)
 			{
-				alert(1);
 				imgLimit = Number(json.imgLimit);
 				imgRealNumber = Number(json.imgRealNumber);
-				imgExt = Number(json.ext);
+				imgExt = json.ext;
+				
+				$("#ImgError").remove();
+				addImg(40);
 				
 			});
 			
-			if(typeof imgLimit == 'number')
+			$(window).scroll(function()
 			{
-				$("imgError").remove();
-				addImg(40);
-			}
+				if($(window).scrollTop() + $(window).height() >= divStatus[0].height && imgNumber >=40)
+					if(onLoading == false)
+						addImg(20);
+			});
+			
+			$(window).click(function()
+			{
+				if(imgOnClick)
+				{
+					imgOnClick = false;
+					$("#MyComment").remove();
+				}
+			});
+			
 		</script>
 	<body/>
 <html/>
