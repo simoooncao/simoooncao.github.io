@@ -1,0 +1,467 @@
+﻿<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Battleships_demo</title>
+	</head>
+	
+	<body>
+		<div id = "m_head" style = "text-align : center;">
+			Battleships!
+		</div>
+		<div id = "m_showwindow" style = "position:relative; background-image:url('images/background.jpg'); width : 600px; height: 400px; border: 1px solid; margin: 0 auto; cursor: url('images/select.png'), default; overflow : hidden;" onclick = "select_ship()">
+			<div id = "selectcircle" style = "position: absolute; top: 0px; left: 0px; display: none">
+				<img id = "selectcircle_pic" src = "images/selectship.png"></img>
+			</div>			
+			<div id = "m_ship0" style = "position: absolute; top: 0px; left: 0px; overflow: hidden;">
+				<img id = "shippic0" src = "images/ship_23.png" style = "cursor: url('images/sword.png'), default;" onclick = "selectship0()"></img>
+			</div>
+			<div id = "m_ship1" style = "position: absolute; top: 0px; left: 150px;">
+				<img id = "shippic1" src = "images/ship_19.png" style = "cursor: url('images/sword.png'), default;" onclick = "selectship1()"></img>
+			</div>
+			
+			<div id = "bullet_shadow0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/shadow.png"></img>
+			</div>
+			<div id = "bullet(1)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(2)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(3)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(4)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(5)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(6)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(7)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(8)_0" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			
+			<div id = "bullet_shadow1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/shadow.png"></img>
+			</div>
+			<div id = "bullet(1)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(2)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(3)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(4)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(5)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(6)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(7)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+			<div id = "bullet(8)_1" style = "position: absolute; top: 75px; left: 75px; display: none">
+				<img id = "bullet_pic" src = "images/rock.png"></img>
+			</div>
+		</div>
+		
+		<div id = "m_ship_status" style = "position:relative; width: 300px; height: 380px; border: 1px solid; top:-400px; left:1000px; font-size:30px; padding: 10px;">
+			<div id = "shipname">Name：快速战舰-复兴</div>
+			<div>&nbsp;</div>
+			<div id = "hp">HP</div>
+			<div>&nbsp;</div>
+			<div id = "damage">Damage</div>
+			<div>&nbsp;</div>
+			<div id = "range">Range</div>
+			<div>&nbsp;</div>
+			<div id = "speed">Speed</div>
+		</div>
+	</body>
+<html>
+
+<script language = "javascript">
+var maptime = 0;
+var map_offset_x = 0;
+var map_offset_y = 0;
+var m_ship_selected;
+var m_ship = new Array(2);
+var m_refresh_interval = 200;//每次刷新的周期·
+m_ship[0] = new Object();
+m_ship[0].pos_x = 0;
+m_ship[0].pos_y = 0;
+m_ship[0].radius = 37.5;
+m_ship[0].orientation = 23;
+m_ship[0].order = "stop";
+m_ship[0].damage = 33;
+m_ship[0].hp = 625;
+m_ship[0].current_hp = 625;
+m_ship[0].range = 7;
+m_ship[0].movespeed = 17;
+m_ship[0].death = false;//death = true表示已经死了，false表示还活着的
+m_ship[0].target_x = 300;
+m_ship[0].target_y = 300;
+
+m_ship[1] = new Object();
+m_ship[1].pos_x = 150;
+m_ship[1].pos_y = 0;
+m_ship[1].radius = 37.5;
+m_ship[1].orientation = 19;
+m_ship[1].order = "stop";
+m_ship[1].damage = 33;
+m_ship[1].hp = 625;
+m_ship[1].current_hp = 305;
+m_ship[1].range = 7;
+m_ship[1].movespeed = 17;
+m_ship[1].death = false;
+m_ship[1].target_x = 50;
+m_ship[1].target_y = 50;
+//m_ship[1] = new Object();
+//m_ship[2] = new Object();
+document.oncontextmenu = function()//屏蔽鼠标右键  
+{  
+   return false;  
+} 
+var m_loop = setInterval("m_refresh()", m_refresh_interval); 
+//主循环
+function m_refresh(){
+	maptime++;
+	//下面是实现上一个回合的order并逻辑判断；
+	var i;
+	var ele;//element
+	for (i = 0; i < m_ship.length; i++){//对每艘船实现
+		if (m_ship[i].order == 'spin+'){//左旋
+			m_ship[i].orientation = (m_ship[i].orientation + 1) % 24;
+			ele = document.getElementById('m_ship' + i);//获取船【i】
+			ele.firstChild.nextSibling.src = 'images/ship_' + m_ship[i].orientation + '.png';
+		}
+		if (m_ship[i].order == 'spin-'){//右旋
+			m_ship[i].orientation = (m_ship[i].orientation + 23) % 24;
+			ele = document.getElementById('m_ship' + i);//获取船【i】
+			ele.firstChild.nextSibling.src = 'images/ship_' + m_ship[i].orientation + '.png';
+		}
+		if(m_ship[i].order.indexOf("moveto") >= 0 )  { //船的平移运动和旋转
+			var s = m_ship[i].order;
+			var w = m_ship[i].order.indexOf(',');
+			var v = m_ship[i].order.indexOf(')');
+			var z = m_ship[i].order.substr(w+1).indexOf(',') + w+1;
+			var m_x = s.substring(7, w);
+			var m_y = s.substring(w + 1, z);
+			var m_r = s.substring(z + 1, v);
+			m_r = parseInt(m_r);
+			console.log(m_x);
+			console.log(m_y);
+			console.log(m_r);
+			//下面用来突变船的坐标并显示
+			set_ship_pos(i, m_x, m_y, m_r);
+		}
+		if (m_ship[i].order == "shoot"){//发炮
+			m_fire(m_ship[i].pos_x + m_ship[i].radius, m_ship[i].pos_y + m_ship[i].radius, m_ship[i].target_x, m_ship[i].target_y, 20, i);//最后liang个是弹道速度
+		}
+		m_ship[i].order = "stop";
+	}
+	//将order置为stop
+	
+ 
+	
+	//下面是计算order的过程
+	for (i = 0; i < m_ship.length; i++){
+		if (m_ship[i].current_hp <= 0 && m_ship[i].death == false){//船刚死
+		m_ship[i].order = "die";
+		m_ship[i].death = true;
+		//此处应有船死的特技
+		ship_sink(i);
+	}
+	}
+}
+document.onkeydown=function(event){ 
+var e = event || window.event || arguments.callee.caller.arguments[0]; 
+if(e && e.keyCode==90){ // 按 z键
+	m_ship[0].order = "spin+";
+}
+else if (e && e.keyCode==88){//按x键
+	m_ship[0].order = "spin-";
+}
+}
+
+function select_ship(){//鼠标单击某个舰船
+	if (typeof(m_ship_selected) == 'undefined')
+		return;
+	if (m_ship[m_ship_selected].current_hp <= 0)//船死了
+		return;
+	var m_select = document.getElementById('selectcircle');
+	m_select.style.top = m_ship[m_ship_selected].pos_y - map_offset_y + 'px';
+	m_select.style.left = m_ship[m_ship_selected].pos_x - map_offset_x + 'px';
+	m_select.style.display = "block";
+	//设置右边的东西
+	document.getElementById('shipname').innerHTML = '战舰-复兴';//待修改
+	document.getElementById('hp').innerHTML = 'HP: ' + m_ship[m_ship_selected].current_hp + '/' + m_ship[m_ship_selected].hp;
+	document.getElementById('damage').innerHTML = 'Damage: ' + m_ship[m_ship_selected].damage;
+	document.getElementById('range').innerHTML = 'Range: ' + m_ship[m_ship_selected].range;
+	document.getElementById('speed').innerHTML = 'Movespeed: ' + m_ship[m_ship_selected].movespeed;
+}
+
+function selectship0(){
+	m_ship_selected = 0;
+}
+function selectship1(){
+	m_ship_selected = 1;
+}
+function selectship2(){
+	m_ship_selected = 2;
+}
+function selectship3(){
+	m_ship_selected = 3;
+}
+function selectship4(){
+	m_ship_selected = 4;
+}
+function selectship5(){
+	m_ship_selected = 5;
+}
+
+function ship_sink(i){//m_ship[i]沉没
+	var x = m_ship[i].pos_x - map_offset_x;
+	var y = m_ship[i].pos_y - map_offset_y;
+	//隐藏原来的东西
+	var lastshipdiv = document.getElementById("m_ship" + i);
+	lastshipdiv.style.display = "none";
+	//创建爆炸特技！
+	var m_show = document.getElementById("m_showwindow");
+	m_show.innerHTML += '<div id = "m_shipremains'+ i +'" style = "position: absolute; top: ' + y + 'px; left: ' + x + 'px; overflow:hidden"><img src = "images/BOOM_75.png"></img></div>';
+	setTimeout("ship_die_1("+ i + ")", m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 1 + ')', 2*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 2 + ')', 3*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 3 + ')', 4*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 4 + ')', 5*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 5 + ')', 6*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 6 + ')', 7*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 7 + ')', 8*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 8 + ')', 9*m_refresh_interval);
+	setTimeout('ship_die_2('+ i + ',' + 9 + ')', 10*m_refresh_interval);
+	if (m_ship_selected == i){//删除选择框
+		var m_circle = document.getElementById('selectcircle');
+		m_circle.style.display = "none";
+	}
+	setTimeout('ship_die_3('+ i + ',' + 1 + ')', 11*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 2 + ')', 12*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 3 + ')', 13*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 4 + ')', 14*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 5 + ')', 15*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 6 + ')', 16*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 7 + ')', 17*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 8 + ')', 18*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 9 + ')', 19*m_refresh_interval);
+	setTimeout('ship_die_3('+ i + ',' + 10 + ')', 20*m_refresh_interval);
+	setTimeout("ship_die_4("+ i +")", 21*m_refresh_interval);
+}
+function ship_die_1(i){
+	var boom = document.getElementById("m_shipremains" + i);
+	boom.style.width = 2 * m_ship[i].radius + 'px';
+	boom.style.height = 2 * m_ship[i].radius + 'px';
+	boom.firstChild.src = "images/ship_" + m_ship[i].orientation + ".png";
+}
+
+function ship_die_2(i, x){
+	var boom = document.getElementById("m_shipremains" + i);
+	boom.firstChild.style.MozTransform = "rotate(-" + 10*x + "deg)"; 
+	boom.firstChild.style.WebkitTransform = "rotate(-" + 10*x + "deg)";
+	boom.firstChild.style.position = "relative";
+	boom.firstChild.style.top = 5 * x * m_ship[i].radius / 75 + "px";
+	boom.firstChild.style.opacity = 1 - 0.04*x;
+}
+
+function ship_die_3(i, x){
+	var boom = document.getElementById("m_shipremains" + i);
+	boom.firstChild.style.position = "relative";
+	boom.firstChild.style.top = 5 * x * m_ship[i].radius / 75 + 45 * m_ship[i].radius / 75 + "px";
+	boom.firstChild.style.opacity = 0.64 - 0.03*x;
+}
+
+function ship_die_4(i){
+	var boom = document.getElementById("m_shipremains" + i);
+	boom.remove();
+}
+
+function set_ship_pos(i, m_x, m_y, m_r){
+	m_ship[i].pos_x = m_x;
+	m_ship[i].pos_y = m_y;
+	
+	m_ship[i].orientation = (m_ship[i].orientation + 24 + m_r) % 24;
+	var pic = document.getElementById('m_ship' + i);
+	pic.style.left = m_ship[i].pos_x - map_offset_x + 'px';
+	pic.style.top = m_ship[i].pos_y - map_offset_y + 'px';
+	if (m_r != 0)
+		document.getElementById('shippic' + i).src = 'images/ship_' + m_ship[i].orientation + '.png';
+	if (m_ship_selected == i){//把选择框一起运动
+		var m_circle = document.getElementById('selectcircle');
+		m_circle.style.left = m_ship[i].pos_x - map_offset_x + 'px';
+		m_circle.style.top = m_ship[i].pos_y - map_offset_y + 'px';
+	}
+}
+
+function m_fire(from_x, from_y, to_x, to_y, speed, i){
+	var totaltime = Math.ceil(Math.sqrt((from_x - to_x)*(from_x - to_x) + (from_y - to_y)*(from_y - to_y)) / speed);
+	//原地放一个炮弹影子
+	document.getElementById('bullet_shadow' + i).style.display = "block";
+	document.getElementById('bullet(1)_' + i).style.display = "block";
+	document.getElementById('bullet(2)_' + i).style.display = "block";
+	document.getElementById('bullet(3)_' + i).style.display = "block";
+	document.getElementById('bullet(4)_' + i).style.display = "block";
+	document.getElementById('bullet(5)_' + i).style.display = "block";
+	document.getElementById('bullet(6)_' + i).style.display = "block";
+	document.getElementById('bullet(7)_' + i).style.display = "block";
+	document.getElementById('bullet(8)_' + i).style.display = "block";
+	document.getElementById('bullet_shadow' + i).style.left = from_x + 'px';
+	document.getElementById('bullet_shadow' + i).style.top = from_y + 'px';
+	var j;
+	for (j = 1; j <= 8; j++){
+		document.getElementById('bullet('+j+')_' + i).style.left = from_x + 'px';
+		document.getElementById('bullet('+j+')_' + i).style.top = from_y + 'px';
+	}
+	//alert(totaltime);
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.4," +totaltime+")", j * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly2("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 1," +totaltime+")", j * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly3("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.875," +totaltime+")", (j + 1) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly4("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.75," +totaltime+")", (j + 2) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly5("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.625," +totaltime+")", (j + 3) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly6("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.5," +totaltime+")", (j + 4) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly7("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.375," +totaltime+")", (j + 5) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly8("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.25," +totaltime+")", (j + 6) * m_refresh_interval);
+	}
+	for (j = 1; j <= totaltime + 1; j++){
+		setTimeout("bulletfly9("+i+","+speed+","+from_x+","+from_y+","+to_x+","+to_y+","+j+", 0.125," +totaltime+")", (j + 7) * m_refresh_interval);
+	}
+}
+function bulletfly(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	document.getElementById('bullet_shadow' + i).style.opacity = m_alpha;
+	document.getElementById('bullet_shadow' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet_shadow' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet_shadow' + i).style.display = "none";
+	}
+	if (x == totaltime){
+		judge_current_hp(i, to_x, to_y);
+	}
+}
+function bulletfly2(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(1)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(1)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(1)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(1)_' + i).style.display = "none";
+	}
+}
+function bulletfly3(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(2)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(2)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(2)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(2)_' + i).style.display = "none";
+	}
+}
+function bulletfly4(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(3)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(3)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(3)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(3)_' + i).style.display = "none";
+	}
+}
+function bulletfly5(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(4)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(4)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(4)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(4)_' + i).style.display = "none";
+	}
+}
+function bulletfly6(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(5)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(5)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(5)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(5)_' + i).style.display = "none";
+	}
+}
+function bulletfly7(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(6)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(6)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(6)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(6)_' + i).style.display = "none";
+	}
+}
+function bulletfly8(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(7)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(7)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(7)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(7)_' + i).style.display = "none";
+	}
+}
+function bulletfly9(i, speed, from_x, from_y, to_x, to_y, x, m_alpha, totaltime){
+	var h = 80;
+	//alert("fly");
+	document.getElementById('bullet(8)_' + i).style.opacity = m_alpha;
+	document.getElementById('bullet(8)_' + i).style.left = Math.round(from_x + x*(to_x - from_x) / totaltime) - map_offset_x + 'px';
+	document.getElementById('bullet(8)_' + i).style.top  = Math.round(from_y + x*(to_y - from_y) / totaltime - (4*h*x)/totaltime + (4*h*x*x)/ ((totaltime)*(totaltime))) - map_offset_y + 'px';
+	if (x == totaltime + 1){
+		document.getElementById('bullet(8)_' + i).style.display = "none";
+	}
+}
+function judge_current_hp(i, x, y){//判定ship[i]子弹在(x,y)爆炸造成的伤害
+	var j;
+	var center_x;
+	var center_y;
+	for (j = 0; j < m_ship.length; j++){
+		center_x = m_ship[j].pos_x + m_ship[j].radius;
+		center_y = m_ship[j].pos_y + m_ship[j].radius;
+		if ((x-center_x)*(x-center_x) + (y-center_y)*(y-center_y) <= m_ship[j].radius * m_ship[j].radius){//打中穿了
+			m_ship[j].current_hp -= m_ship[i].damage;
+			if (j == m_ship_selected){//更新右边菜单
+				document.getElementById('hp').innerHTML = 'HP: ' + m_ship[m_ship_selected].current_hp + '/' + m_ship[m_ship_selected].hp;
+			}
+		}
+	}
+}
+</script>

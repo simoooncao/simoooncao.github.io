@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title> SimonCao`s Chat Room!</title>
+		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+		<script src = "http://libs.baidu.com/jquery/1.7.2/jquery.min.js" > </script>
+		<script type = "text/javascript">
+			$(window).keydown(function(event)
+			{
+				var e = event || window.event || arguments.callee.caller.arguments[0]; 
+				if(e && e.keyCode == 13)
+				{
+					if(getName  && e.ctrlKey)
+					{
+						var data = $("textarea").attr("value");
+						if(data == "") return;
+						//
+						$("textarea").attr("value" , "");
+					}
+					if(!getName)
+					{
+						var __name = $("input").attr("value");
+						if(__name == '') return;
+						$("input").attr("value" , "");
+						myFirebase.child("user").once('value', function(dataSnapshot)
+						{
+							var userList = dataSnapshot.val();
+							
+							getName = true;
+							for (var i in userList)
+								if (userList[i].name == __name)
+								{
+									$("#inputNameText p").attr("value" , "这个昵称被别人抢先了哦~");
+									getName = false;
+									break;
+								}
+
+							if (getName == true)
+							{
+								myKey = (myFirebase.child("user").push({name : __name})).key();
+								$("#inputName").remove();
+								$("#userList,#chatWindow,#inputWindow").css("display" , "inline");
+								$("#myTitle,#myBottom").css("display" , "block");
+							}
+						});
+						
+					}
+				}
+			});
+			$(window).unload(function()
+			{
+				myFirebase.child("user").child(myKey).remove();
+			});
+		</script>
+		<style type = 'text/css'>
+			html {height:100%; max-height:100%;  font-size:12px; }
+			body {height:100%; line-height: 1.6em; max-height:100%;overflow: hidden;}
+			#userList {position : absolute ; margin : 12px ; left : 0 ; top : 20px ; bottom : 20px ; width : 100px ;}
+			#chatWindow,#inputWindow {position : absolute ; left : 120px ; right : 0 ; margin : 12px}
+			#chatWindow{top : 20px ; bottom : 90px}
+			#inputWindow{bottom : 20px ; height : 60px}
+			div{border : 2px solid #B7D8ED ; border-radius:5px;}
+			#myTitle,#myBottom{position : absolute ; left : 12px; right : 12px ; height : 20px ; text-align : center}
+			#myTitle{top : 0}
+			#myBottom{bottom : 0}
+			li{width : 100%}
+			textarea{background-color:transparent ; height : 90% ; width : 99.5%}
+			
+			#inputName {position : absolute ; left : 0 ; right : 0 ; bottom : 0 ; top : 0 ; background:url(source/background.jpg); z-index : 25}
+			#inputNameText {display : block ; position : absolute ; margin : 0 auto ; z-index : 26 ; top : 0 ; width : 200px ; height : 60px}
+			#userList,#myTitle,#myBottom,#chatWindow,#inputWindow {display : none}
+			
+		</style>
+	</head>
+	<body>
+		<div id = 'inputName'>
+			<div id = 'inputNameText'}
+				<p align = 'center'>
+					选定一个喜欢的昵称吧！
+				</p>
+				<input type = "text"> </input>
+			</div>
+		</div>
+		<div id = 'myTitle'>
+			There is SimonCao's Chat Room. Welcome!
+		</div>
+		<div id = 'userList'>
+			<p align = 'center'>UserList</p>
+		</div>
+		<div id = 'chatWindow'>
+			<p align = 'center'>
+				欢迎来到我的聊天室，请按ctrl+Enter发送聊天信息~
+			</p>
+		</div>
+		<div id = 'inputWindow' >
+			<textarea></textarea>
+		</div>
+		<div id = 'myBottom'>
+			Copyright ? 2014 - 2015 SimonCao. All Rights Reserved
+		</div>
+		
+		<script type = "text/javascript">
+			var getName = false;
+			var myFirebase = new Firebase('https://crackling-torch-7514.firebaseio.com/');
+			var myKey;
+			
+			myFirebase.child('user').on("child_added" , function(dataSnapshot)
+			{
+				var $newUser = $("<li>" + dataSnapshot.val().name + "</li>");
+				$newUser.attr("id" , "__" + dataSnapshot.val().name);
+				$("userList").append($newUser);
+			});
+			myFirebase.child('user').on("child_removed" , function(dataSnapshot)
+			{
+				$("#__" + dataSnapshot.val().name).remove();
+			});
+		</script>
+	</body>
+</html>
+	
