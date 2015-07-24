@@ -15,7 +15,11 @@
 					{
 						var data = $("textarea").attr("value");
 						if(data == "") return;
-						//
+						myFirebase.child('chatHistory').push({
+															    user : myName , 
+																content : data , 
+																time : (new Date()).getTime()
+															 });
 						$("textarea").attr("value" , "");
 					}
 					if(!getName)
@@ -31,7 +35,7 @@
 							for (var i in userList)
 								if (userList[i].name == __name)
 								{
-									$("#inputNameText p").attr("value" , "这个昵称被别人抢先了哦~");
+									$("#inputNameText p").text("这个昵称被别人抢先了哦~");
 									getName = false;
 									break;
 								}
@@ -42,6 +46,7 @@
 								$("#inputName").remove();
 								$("#userList,#chatWindow,#inputWindow").css("display" , "inline");
 								$("#myTitle,#myBottom").css("display" , "block");
+								myName = __name;
 							}
 						});
 						
@@ -54,28 +59,28 @@
 			});
 		</script>
 		<style type = 'text/css'>
-			html {height:100%; max-height:100%;  font-size:12px; }
+			html {height:100%; max-height:100%;  font-size:12px;  background:url(source/background.jpg);}
 			body {height:100%; line-height: 1.6em; max-height:100%;overflow: hidden;}
 			#userList {position : absolute ; margin : 12px ; left : 0 ; top : 20px ; bottom : 20px ; width : 100px ;}
 			#chatWindow,#inputWindow {position : absolute ; left : 120px ; right : 0 ; margin : 12px}
 			#chatWindow{top : 20px ; bottom : 90px}
 			#inputWindow{bottom : 20px ; height : 60px}
-			div{border : 2px solid #B7D8ED ; border-radius:5px;}
 			#myTitle,#myBottom{position : absolute ; left : 12px; right : 12px ; height : 20px ; text-align : center}
 			#myTitle{top : 0}
 			#myBottom{bottom : 0}
 			li{width : 100%}
+			li,#chatWindow,textarea,#userList {overflow : auto}
 			textarea{background-color:transparent ; height : 90% ; width : 99.5%}
 			
-			#inputName {position : absolute ; left : 0 ; right : 0 ; bottom : 0 ; top : 0 ; background:url(source/background.jpg); z-index : 25}
+			#inputName {position : absolute ; left : 0 ; right : 0 ; bottom : 0 ; top : 0 ; z-index : 25}
 			#inputNameText {display : block ; position : absolute ; margin : 0 auto ; z-index : 26 ; top : 0 ; width : 200px ; height : 60px}
-			#userList,#myTitle,#myBottom,#chatWindow,#inputWindow {display : none}
+			#userList,#myTitle,#myBottom,#chatWindow,#inputWindow {display : none ; border : 2px solid #B7D8ED ; border-radius:5px;}
 			
 		</style>
 	</head>
 	<body>
 		<div id = 'inputName'>
-			<div id = 'inputNameText'}
+			<div id = 'inputNameText'>
 				<p align = 'center'>
 					选定一个喜欢的昵称吧！
 				</p>
@@ -103,7 +108,7 @@
 		<script type = "text/javascript">
 			var getName = false;
 			var myFirebase = new Firebase('https://crackling-torch-7514.firebaseio.com/');
-			var myKey;
+			var myKey , myName , myTime = new Date();
 			
 			myFirebase.child('user').on("child_added" , function(dataSnapshot)
 			{
@@ -114,6 +119,19 @@
 			myFirebase.child('user').on("child_removed" , function(dataSnapshot)
 			{
 				$("#__" + dataSnapshot.val().name).remove();
+			});
+			myFirebase.child('chatHistory').on("child_added" , function(dataSnapshot)
+			{
+				var nowDate = new Date();
+				if(dataSnapshot.val().time < myTime.getTime())
+					return;
+				
+				nowDate.setTime(dataSnapshot.val().time);
+				var $message = $("<div></div>");
+				$message.text("" + nowDate.getFullYear() + "." + (nowDate.getMonth() + 1) + "." + nowDate.getDate() + " " + nowDate.getHours() + ":" + nowDate.getMinutes() + ":" + nowDate.getSeconds()
+							  + "," + dataSnapshot.val().user + ": " + dataSnapshot.val().content);
+				$message.css("width" , "100%");
+				$("#chatWindow").append($message);
 			});
 		</script>
 	</body>
