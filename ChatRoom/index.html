@@ -106,6 +106,7 @@
 			
 			myFirebase.child('user').on("child_added" , function(dataSnapshot)
 			{
+				alert("add!");
 				var $newUser = $("<li>" + dataSnapshot.val().name + "</li>");
 				$newUser.attr("id" , "__" + dataSnapshot.val().name);
 				$("userList").append($newUser);
