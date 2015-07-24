@@ -107,10 +107,9 @@
 			
 			myFirebase.child('user').on("child_added" , function(dataSnapshot)
 			{
-				debugger;
 				var $newUser = $("<li>" + dataSnapshot.val().name + "</li>");
 				$newUser.attr("id" , "__" + dataSnapshot.val().name);
-				$("userList").append($newUser);
+				$("#userList").append($newUser);
 			});
 			myFirebase.child('user').on("child_removed" , function(dataSnapshot)
 			{
